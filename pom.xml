@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.7</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.yikuni</groupId>
+    <artifactId>robot-client-akarin</artifactId>
+    <version>1.2.2</version>
+    <name>robot-client-akarin</name>
+    <description>robot-client-akarin</description>
+    <properties>
+        <java.version>1.8</java.version>
+        <simbot.version>3.0.0.preview.8.0</simbot.version>
+        <simbot-component-tcg.version>3.0.0.0.preview.3.0</simbot-component-tcg.version>
+        <simbot-component-mirai.version>3.0.0.0.preview.2.0</simbot-component-mirai.version>
+    </properties>
+    <dependencies>
+        <!-- 引入你所需要的Spring Boot依赖。这里假设你需要使用 web 相关功能 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- simbot-spring-boot-starter 库 -->
+        <dependency>
+            <groupId>love.forte.simbot.boot</groupId>
+            <artifactId>simboot-core-spring-boot-starter</artifactId>
+            <version>${simbot.version}</version>
+        </dependency>
+
+        <!-- 腾讯频道组件 -->
+        <dependency>
+            <groupId>love.forte.simbot.component</groupId>
+            <artifactId>simbot-component-tencent-guild-boot</artifactId>
+            <version>${simbot-component-tcg.version}</version>
+        </dependency>
+
+        <!-- mirai组件 -->
+        <dependency>
+            <groupId>love.forte.simbot.component</groupId>
+            <artifactId>simbot-component-mirai-boot</artifactId>
+            <version>${simbot-component-mirai.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.yikuni.robot</groupId>
+            <artifactId>robot-common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.75</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.yikuni.robot</groupId>
+            <artifactId>akalin-robot-spring-boot-starter</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>1.6.10</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- 或许还需要其他依赖... -->
+
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>  <!-- 指定添加项目中使用的外部jar的classpath项 -->
+                            <mainClass>com.yikuni.robot.client.RobotClientAkarinApplication</mainClass>  <!-- 指定本项目jar包的启动类 -->
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+    <profile>
+        <id>appassembler</id>
+        <activation>
+            <activeByDefault>true</activeByDefault>  <!-- 采用项目默认的环境变量配置 dev test pro -->
+        </activation>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>appassembler-maven-plugin</artifactId>
+                    <version>2.1.0</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>assemble</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <!-- lib目录中jar的存放规则，默认是${groupId}/${artifactId}的目录格式，flat表示直接把jar放到lib目录 -->
+                        <repositoryLayout>flat</repositoryLayout>
+                        <useWildcardClassPath>true</useWildcardClassPath>
+                        <!-- 配置文件的目标目录 -->
+                        <configurationDirectory>conf</configurationDirectory>
+                        <!-- 拷贝配置文件到上面的目录中 -->
+                        <copyConfigurationDirectory>true</copyConfigurationDirectory>
+                        <!-- 从哪里拷贝配置文件 (默认src/main/config) -->
+                        <configurationSourceDirectory>src/main/resources</configurationSourceDirectory>
+                        <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
+                        <!--生成的项目的目录位置，这里的client是项目的名称，你可以根据你的需要自己随便命名 -->
+                        <assembleDirectory>${project.build.directory}/app</assembleDirectory>
+                        <!-- 打包的jar，以及maven依赖的jar放到这个目录里面 -->
+                        <repositoryName>lib</repositoryName>
+                        <logsDirectory>logs</logsDirectory>
+                        <tempDirectory>temp</tempDirectory>
+                        <!-- 可执行脚本的目录 -->
+                        <binFolder>bin</binFolder>
+                        <programs>
+                            <program>
+                                <id>main</id>
+                                <mainClass>com.yikuni.robot.client.RobotClientAkarinApplication</mainClass>  <!-- 启动类地址 -->
+                                <name>start</name>  <!-- 生成的脚本文件的名称，比如start.sh,你也可以根据你的需要命名成其他名字 -->
+                                <jvmSettings>  <!-- jvm参数，根据自己内存来 -->
+                                    <extraArguments>
+                                        <extraArgument>-server</extraArgument>
+                                        <extraArgument>-Xmx1G</extraArgument>
+                                        <extraArgument>-Xms1G</extraArgument>
+                                    </extraArguments>
+                                </jvmSettings>
+                            </program>
+                        </programs>
+                        <!-- 生成linux, windows两种平台的执行脚本 -->
+                        <platforms>
+                            <platform>windows</platform>
+                            <platform>unix</platform>
+                        </platforms>
+                        <binFileExtensions>
+                            <unix>.sh</unix>  <!-- 设置生成文件为xshell脚本格式 -->
+                        </binFileExtensions>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+    </profiles>
+</project>
